@@ -1,5 +1,6 @@
-# super-api
-Super-Opinionated Framwork for Building REST API.
+# Super API
+
+Super-Opinionated Framwork for Building a REST API.
 
 
 ## Summary
