@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Schema generation bike generates expected schema 1`] = `
+"CREATE TABLE bike_revision (
+  id uuid NOT NULL,
+  revision integer NOT NULL,
+  price_id uuid REFERENCES price (id),
+  brand text,
+  wheelSize integer,
+  deliveryDate timestamptz,
+  UNIQUE(id, revision)
+);
+
+CREATE TABLE bike (
+  id uuid NOT NULL,
+  revision integer NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id, revision) REFERENCES bike_revision (id, revision)
+);
+
+CREATE TABLE bike_wheels (
+  bike_id uuid NOT NULL REFERENCES bike (id),
+  wheel_id uuid NOT NULL REFERENCES wheel (id),
+  PRIMARY KEY (bike_id, wheel_id)
+);"
+`;
+
+exports[`Schema generation price generates expected schema 1`] = `
+"CREATE TABLE price_revision (
+  id uuid NOT NULL,
+  revision integer NOT NULL,
+  amount float,
+  currency text,
+  UNIQUE(id, revision)
+);
+
+CREATE TABLE price (
+  id uuid NOT NULL,
+  revision integer NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id, revision) REFERENCES price_revision (id, revision)
+);"
+`;
+
+exports[`Schema generation wheel generates expected schema 1`] = `
+"CREATE TABLE wheel_revision (
+  id uuid NOT NULL,
+  revision integer NOT NULL,
+  size float,
+  thickness float,
+  UNIQUE(id, revision)
+);
+
+CREATE TABLE wheel (
+  id uuid NOT NULL,
+  revision integer NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id, revision) REFERENCES wheel_revision (id, revision)
+);"
+`;
