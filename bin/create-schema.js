@@ -7,4 +7,4 @@ const IMPORT_PATH = path.resolve(process.argv[2]);
 
 const MODELS = require(IMPORT_PATH);
 
-process.stdout.write(createSchema(MODELS[EXPORT_NAME]).join('\n\n') + '\n');
+process.stdout.write(createSchema(MODELS[EXPORT_NAME]) + '\n');
