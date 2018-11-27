@@ -1,5 +1,5 @@
 const uuidv4 = require('uuid/v4');
-const { Client } = require('pg')
+const { Client } = require('pg');
 const { createModel, Field } = require('../../model');
 const { float, date, int } = require('../../model/transform');
 const { createSchema } = require('../../model/schema');
