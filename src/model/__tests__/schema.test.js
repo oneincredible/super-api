@@ -27,7 +27,10 @@ describe('Schema generation', () => {
   [Price, Wheel, Bike].forEach(Model => {
     describe(Model.name, () => {
       it('generates expected schema', () => {
-        expect(createSchema(Model)).toMatchSnapshot();
+        const statements = createSchema(Model);
+        statements.forEach(statement => {
+          expect(statement).toMatchSnapshot();
+        });
       });
     });
   });
