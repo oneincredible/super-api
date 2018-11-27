@@ -7,14 +7,14 @@ jobs:
       - setup_remote_docker
       - checkout
       - run:
-          name: Yarn Install
-          command: yarn install
+          name: Setup environment
+          command: docker-compose up -d --build
       - run:
           name: Lint
-          command: yarn lint
+          command: docker-compose run super-api yarn lint
       - run:
           name: Test
-          command: yarn test --verbose
+          command: docker-compose run -e CI=true super-api yarn test --verbose
 
 workflows:
   version: 2
