@@ -6,8 +6,8 @@ exports[`Schema generation bike generates expected schema 1`] = `
   revision integer NOT NULL,
   price_id uuid REFERENCES price (id),
   brand text,
-  wheelSize integer,
-  deliveryDate timestamptz,
+  wheel_size integer,
+  delivery_date timestamptz,
   UNIQUE(id, revision)
 );"
 `;
