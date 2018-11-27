@@ -62,7 +62,9 @@ function createRelationStorageAdapter(ChildStorageAdapter, Model, field) {
   return RelationStorageAdapter;
 }
 
-function createRevisionedStorageAdapter(Model, tableName) {
+function createRevisionedStorageAdapter(Model) {
+  const tableName = Model.name;
+  const valueFields = Model.fields.filter(field => field.type === Type.VALUE);
   const listFields = Model.fields.filter(field => field.type === Type.LIST);
   const modelFields = Model.fields.filter(field => field.type === Type.MODEL);
 
@@ -106,12 +108,15 @@ function createRevisionedStorageAdapter(Model, tableName) {
         return null;
       }
 
-      const model = result.rows[0];
+      const row = result.rows[0];
+      const model = {};
+      for (const field of valueFields) {
+        model[field.name] = row[field.columnName];
+      }
 
       await Promise.all([
         ...modelFields.map(async ({ name, columnName }) => {
-          model[name] = await this.composed[name].fetch(model[columnName]);
-          delete model[columnName];
+          model[name] = await this.composed[name].fetch(row[columnName]);
         }),
         ...listFields.map(async ({ name }) => {
           model[name] = await this.relations[name].fetch(model.id);

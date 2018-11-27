@@ -1,5 +1,12 @@
 const { noop } = require('./transform');
 
+function toSnakeCase(pascalCase) {
+  return pascalCase
+    .split(/(?=[A-Z])/)
+    .join('_')
+    .toLowerCase();
+}
+
 const Type = {
   VALUE: Symbol('value field'),
   LIST: Symbol('list field'),
@@ -14,7 +21,7 @@ function value(name, transform = noop) {
     encode: transform.encode,
     decode: transform.decode,
 
-    columnName: name,
+    columnName: toSnakeCase(name),
     columnValue(model) {
       return model[name];
     },
@@ -42,7 +49,7 @@ function model(name, Model, StorageAdapter) {
     encode: Model.encode,
     decode: Model.decode,
 
-    columnName: `${name}_id`,
+    columnName: `${toSnakeCase(name)}_id`,
     columnValue(model) {
       return model[name].id;
     },
