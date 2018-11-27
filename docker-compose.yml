@@ -1,0 +1,23 @@
+version: "3.3"
+
+services:
+  database:
+    image: postgres:9.6-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+
+  super-api:
+    image: super-api
+    build:
+      context: .
+    depends_on:
+     - database
+    environment:
+      PGHOST: database
+      PGDATABASE: test
+      PGUSER: test
+      PGPASSWORD: test
