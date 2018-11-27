@@ -113,7 +113,7 @@ function createSchema(Model) {
     );
   }
 
-  return statements.join('\n\n');
+  return statements;
 }
 
 module.exports = {

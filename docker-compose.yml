@@ -18,6 +18,5 @@ services:
      - database
     environment:
       PGHOST: database
-      PGDATABASE: test
       PGUSER: test
       PGPASSWORD: test

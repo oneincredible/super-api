@@ -9,16 +9,20 @@ exports[`Schema generation bike generates expected schema 1`] = `
   wheelSize integer,
   deliveryDate timestamptz,
   UNIQUE(id, revision)
-);
+);"
+`;
 
-CREATE TABLE bike (
+exports[`Schema generation bike generates expected schema 2`] = `
+"CREATE TABLE bike (
   id uuid NOT NULL,
   revision integer NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id, revision) REFERENCES bike_revision (id, revision)
-);
+);"
+`;
 
-CREATE TABLE bike_wheels (
+exports[`Schema generation bike generates expected schema 3`] = `
+"CREATE TABLE bike_wheels (
   bike_id uuid NOT NULL REFERENCES bike (id),
   wheel_id uuid NOT NULL REFERENCES wheel (id),
   PRIMARY KEY (bike_id, wheel_id)
@@ -32,9 +36,11 @@ exports[`Schema generation price generates expected schema 1`] = `
   amount float,
   currency text,
   UNIQUE(id, revision)
-);
+);"
+`;
 
-CREATE TABLE price (
+exports[`Schema generation price generates expected schema 2`] = `
+"CREATE TABLE price (
   id uuid NOT NULL,
   revision integer NOT NULL,
   PRIMARY KEY (id),
@@ -49,9 +55,11 @@ exports[`Schema generation wheel generates expected schema 1`] = `
   size float,
   thickness float,
   UNIQUE(id, revision)
-);
+);"
+`;
 
-CREATE TABLE wheel (
+exports[`Schema generation wheel generates expected schema 2`] = `
+"CREATE TABLE wheel (
   id uuid NOT NULL,
   revision integer NOT NULL,
   PRIMARY KEY (id),
