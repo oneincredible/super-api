@@ -35,21 +35,6 @@ function createTestDB() {
 }
 
 function bootstrapDB(db) {
-  function createEntity() {
-    return {
-      id: uuidv4(),
-      brand: 'Crescent',
-      wheelSize: 24,
-      deliveryDate: new Date('1992-02-02T00:00:00.000Z'),
-      price: {
-        id: uuidv4(),
-        amount: 2433.99,
-        currency: 'USD',
-      },
-      wheels: [],
-    };
-  }
-
   const Price = createModel(
     [Field.value('amount', float()), Field.value('currency')],
     'price'
@@ -87,7 +72,6 @@ function bootstrapDB(db) {
   });
 
   return {
-    createEntity,
     models: {
       Bike,
       Price,
