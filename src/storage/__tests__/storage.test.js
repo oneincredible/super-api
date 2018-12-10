@@ -5,6 +5,35 @@ const { float, date, int } = require('../../model/transform');
 const { createSchema } = require('../../model/schema');
 const { createRevisionedStorageAdapter } = require('../adapter');
 
+function createTestDB() {
+  const DB_NAME = uuidv4();
+
+  const db = new Client({
+    database: DB_NAME,
+  });
+
+  let createDB;
+
+  beforeAll(async () => {
+    createDB = new Client({
+      database: 'postgres',
+    });
+
+    createDB.connect();
+
+    await createDB.query(`CREATE DATABASE "${DB_NAME}";`);
+    db.connect();
+  });
+
+  afterAll(async () => {
+    await db.end();
+    await createDB.query(`DROP DATABASE "${DB_NAME}";`);
+    await createDB.end();
+  });
+
+  return db;
+}
+
 function createBike() {
   return {
     id: uuidv4(),
@@ -21,6 +50,8 @@ function createBike() {
 }
 
 describe('Storage', () => {
+  const db = createTestDB();
+
   const Price = createModel(
     [Field.value('amount', float()), Field.value('currency')],
     'price'
@@ -47,32 +78,6 @@ describe('Storage', () => {
   );
 
   const BikeStorage = createRevisionedStorageAdapter(Bike);
-
-  const DB_NAME = uuidv4();
-
-  let createDB, db;
-
-  beforeAll(async () => {
-    createDB = new Client({
-      database: 'postgres',
-    });
-
-    createDB.connect();
-
-    await createDB.query(`CREATE DATABASE "${DB_NAME}";`);
-
-    db = new Client({
-      database: DB_NAME,
-    });
-
-    db.connect();
-  });
-
-  afterAll(async () => {
-    await db.end();
-    await createDB.query(`DROP DATABASE "${DB_NAME}";`);
-    await createDB.end();
-  });
 
   describe('Storage', () => {
     let bikeFixture = createBike();
