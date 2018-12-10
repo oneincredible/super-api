@@ -55,3 +55,23 @@ Super API is a hyper-opinionated framework for building REST APIs.
 ```bash
 yarn add @oneinc/super-api
 ```
+
+
+## Developing
+
+### Running tests
+
+* Spin up Docker.
+
+```
+docker-compose up -d
+```
+
+* Run locally with Docker Compose compatible env.
+
+```
+PGHOST=localhost \
+PGUSER=test \
+PGPASSWORD=test \
+yarn run test --verbose --watch
+```
