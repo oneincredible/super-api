@@ -1,5 +1,5 @@
 const { createTestDB, bootstrapDB } = require('../../util/db');
-const { createBike, createPrice } = require('../../util/model');
+const { createBike } = require('../../util/model');
 
 describe('Storage', () => {
   const db = createTestDB();
@@ -7,7 +7,6 @@ describe('Storage', () => {
 
   describe('Storage', () => {
     let bikeFixture = createBike();
-    bikeFixture.price = createPrice();
     let storage;
 
     beforeAll(() => {

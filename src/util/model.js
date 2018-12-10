@@ -6,7 +6,7 @@ function createBike() {
     brand: 'Crescent',
     wheelSize: 24,
     deliveryDate: new Date('1992-02-02T00:00:00.000Z'),
-    price: null,
+    price: createPrice(),
     wheels: [],
   };
 }
@@ -19,7 +19,13 @@ function createPrice() {
   };
 }
 
-function createWheel() {}
+function createWheel() {
+  return {
+    id: uuidv4(),
+    size: 24.5,
+    thickness: 4,
+  };
+}
 
 module.exports = {
   createBike,

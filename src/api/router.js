@@ -19,6 +19,7 @@ function ensureUUID(paramName) {
 
 function createStorageRouter(Model, storage) {
   const router = express.Router();
+  router.use(express.json());
 
   router.post('/', async (req, res) => {
     const model = Model.decode(req.body);
