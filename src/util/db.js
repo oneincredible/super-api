@@ -63,8 +63,8 @@ function bootstrapDB(db) {
   const BikeStorage = createStorage(Bike, 'bike');
 
   beforeAll(async () => {
-    for (const Model of [Price, Wheel, Bike]) {
-      const statements = createSchema(Model);
+    for (const StorageAdapter of [PriceStorage, WheelStorage, BikeStorage]) {
+      const statements = createSchema(StorageAdapter);
       for (const statement of statements) {
         await db.query(statement);
       }

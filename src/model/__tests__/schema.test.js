@@ -6,29 +6,32 @@ const { createStorage } = require('../../storage');
 describe('Schema generation', () => {
   const Price = createModel(
     [Field.value('amount', float()), Field.value('currency')],
-    'price'
   );
+
+  const PriceStorage = createStorage(Price, 'price');
 
   const Wheel = createModel(
     [Field.value('size', float()), Field.value('thickness', float())],
-    'wheel'
   );
+
+  const WheelStorage = createStorage(Wheel, 'wheel');
 
   const Bike = createModel(
     [
       Field.value('brand'),
       Field.value('wheelSize', int(10)),
       Field.value('deliveryDate', date()),
-      Field.model('price', Price),
-      Field.list('wheels', Wheel),
+      Field.model('price', Price, PriceStorage),
+      Field.list('wheels', Wheel, WheelStorage),
     ],
-    'bike'
   );
 
+  const BikeStorage = createStorage(Bike, 'bike');
+
   [
-    createStorage(Price, 'price'),
-    createStorage(Wheel, 'wheel'),
-    createStorage(Bike, 'bike'),
+    PriceStorage,
+    WheelStorage,
+    BikeStorage,
   ].forEach(StorageAdapter => {
     describe(StorageAdapter.getName(), () => {
       it('generates expected schema', () => {

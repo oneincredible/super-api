@@ -35,12 +35,10 @@ function createValueColumn(field) {
 }
 
 function createReferenceColumn(field) {
-  ensureNamed(field.Model);
-
   const parts = [
     field.columnName,
     'uuid',
-    `REFERENCES ${field.Model.name} (id)`,
+    `REFERENCES ${field.StorageAdapter.getName()} (id)`,
   ];
 
   return parts.join(' ');
@@ -58,7 +56,7 @@ function createSchema(StorageAdapter) {
 
   const listFields = Model.fields.filter(field => field.type === Type.LIST);
 
-  const mainTable = Model.name;
+  const mainTable = StorageAdapter.getName();
   const revisionTable = `${mainTable}_revision`;
 
   statements.push(
@@ -93,11 +91,10 @@ function createSchema(StorageAdapter) {
   );
 
   for (const listField of listFields) {
-    ensureNamed(listField.Model);
     const relationTable = listField.name;
     const listTable = `${mainTable}_${relationTable}`;
-    const parent = Model.name;
-    const child = listField.Model.name;
+    const parent = StorageAdapter.getName();
+    const child = listField.StorageAdapter.getName();
     statements.push(
       [
         `CREATE TABLE ${listTable} (`,
