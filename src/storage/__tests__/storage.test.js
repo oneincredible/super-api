@@ -6,11 +6,15 @@ describe('Storage', () => {
   bootstrapDB(db);
 
   describe('Storage', () => {
-    let bikeFixture = createBike();
+    let bike;
     let storage;
 
     beforeAll(() => {
       storage = new storages.BikeStorage(db);
+    });
+
+    beforeEach(() => {
+      bike = createBike();
     });
 
     describe('#fetch', () => {
@@ -31,12 +35,48 @@ describe('Storage', () => {
 
       describe('when id exists', () => {
         beforeEach(async () => {
-          await storage.store(bikeFixture);
+          await storage.store(bike);
         });
 
         it('returns model for id', async () => {
-          const returned = await storage.fetch(bikeFixture.id);
-          expect(returned).toEqual(bikeFixture);
+          const returned = await storage.fetch(bike.id);
+          expect(returned).toEqual(bike);
+        });
+      });
+    });
+
+    describe('#store', () => {
+      beforeEach(async () => {
+        await storage.store(bike);
+      });
+
+      it('inserts row in DB with revision 1', async () => {
+        const res = await db.query(
+          'SELECT * FROM bike_revision WHERE id = $1',
+          [bike.id]
+        );
+        expect(res.rowCount).toEqual(1);
+        const row = res.rows[0];
+        expect(row.revision).toEqual(1);
+      });
+
+      describe('when storing same object again', () => {
+        beforeEach(async () => {
+          bike.brand = 'DSB';
+          await storage.store(bike);
+        });
+
+        it('adds a revision', async () => {
+          const res = await db.query(
+            'SELECT * FROM bike_revision WHERE id = $1 ORDER BY revision ASC',
+            [bike.id]
+          );
+          expect(res.rowCount).toEqual(2);
+          expect(res.rows[0].brand).toEqual('Crescent');
+          expect(res.rows[0].revision).toEqual(1);
+
+          expect(res.rows[1].brand).toEqual('DSB');
+          expect(res.rows[1].revision).toEqual(2);
         });
       });
     });
