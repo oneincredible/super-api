@@ -8,8 +8,8 @@ function createFetchRevision(Model, name) {
 
   const text = [
     'SELECT ' + fields.join(', '),
-    `FROM ${revisionTable} r`,
-    `JOIN ${parentTable} p ON p.id = r.id AND p.revision = r.revision`,
+    `FROM "${revisionTable}" r`,
+    `JOIN "${parentTable}" p ON p.id = r.id AND p.revision = r.revision`,
     'WHERE p.id = $1',
   ].join(' ');
 
@@ -29,10 +29,10 @@ function createStoreRevision(Model, name) {
   const placeholders = fields.map((field, index) => '$' + (index + 1));
 
   const text = [
-    `INSERT INTO ${revisionTable}`,
+    `INSERT INTO "${revisionTable}"`,
     '(' + [...columns, 'revision'].join(', ') + ')',
     'SELECT ' + [...placeholders, 'COALESCE(MAX(revision) + 1, 1)'].join(', '),
-    `FROM ${revisionTable}`,
+    `FROM "${revisionTable}"`,
     'WHERE id = $1',
     'RETURNING revision',
   ].join(' ');
@@ -47,8 +47,8 @@ function createStoreRevision(Model, name) {
 
 function createPromoteRevision(name) {
   const text = [
-    `INSERT INTO ${name} (id, revision)`,
-    `SELECT id, MAX(revision) FROM ${name}_revision WHERE id = $1 GROUP BY id`,
+    `INSERT INTO "${name}" (id, revision)`,
+    `SELECT id, MAX(revision) FROM "${name}_revision" WHERE id = $1 GROUP BY id`,
     'ON CONFLICT (id) DO UPDATE SET revision = excluded.revision',
   ].join(' ');
 
@@ -61,7 +61,7 @@ function createPromoteRevision(name) {
 }
 
 function createRevokeRevision(name) {
-  const text = `DELETE FROM ${name} WHERE id = $1`;
+  const text = `DELETE FROM "${name}" WHERE id = $1`;
 
   return function createQuery(model) {
     return {
