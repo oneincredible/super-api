@@ -29,10 +29,9 @@ describe('Query modules', () => {
       });
 
       const createQuery = createStoreRevision(Model, 'video');
-      const query = createQuery(model, 19827091725);
+      const query = createQuery(model);
       expect(query.text).toMatchSnapshot();
       expect(query.values).toEqual([
-        19827091725,
         '352b2178-ee3c-11e8-9af5-00090ffe0001',
         'Barry',
         230.23,
