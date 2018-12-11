@@ -1,5 +1,5 @@
-const { createRevisionedStorageAdapter } = require('./adapter');
+const { createStorage } = require('./adapter');
 
 module.exports = {
-  createRevisionedStorageAdapter,
+  createStorage,
 };

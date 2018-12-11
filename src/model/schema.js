@@ -1,8 +1,8 @@
 const { Type } = require('./field');
 
-function ensureNamed(Model) {
-  if (!Model.name) {
-    throw new Error(`Model not named`);
+function ensureStorageAdapter(field) {
+  if (!field.StorageAdapter) {
+    throw new Error(`Field missing StorageAdapter`);
   }
 }
 
@@ -35,21 +35,21 @@ function createValueColumn(field) {
 }
 
 function createReferenceColumn(field) {
-  ensureNamed(field.Model);
+  ensureStorageAdapter(field);
 
   const parts = [
     field.columnName,
     'uuid',
-    `REFERENCES ${field.Model.name} (id)`,
+    `REFERENCES ${field.StorageAdapter.getName()} (id)`,
   ];
 
   return parts.join(' ');
 }
 
-function createSchema(Model) {
-  ensureNamed(Model);
-
+function createSchema(StorageAdapter) {
   const statements = [];
+
+  const Model = StorageAdapter.getModel();
 
   const valueFields = Model.fields.filter(field => field.type === Type.VALUE);
   valueFields.shift(); // Bump off Id.
@@ -58,7 +58,7 @@ function createSchema(Model) {
 
   const listFields = Model.fields.filter(field => field.type === Type.LIST);
 
-  const mainTable = Model.name;
+  const mainTable = StorageAdapter.getName();
   const revisionTable = `${mainTable}_revision`;
 
   statements.push(
@@ -93,11 +93,11 @@ function createSchema(Model) {
   );
 
   for (const listField of listFields) {
-    ensureNamed(listField.Model);
+    ensureStorageAdapter(listField);
     const relationTable = listField.name;
     const listTable = `${mainTable}_${relationTable}`;
-    const parent = Model.name;
-    const child = listField.Model.name;
+    const parent = StorageAdapter.getName();
+    const child = listField.StorageAdapter.getName();
     statements.push(
       [
         `CREATE TABLE ${listTable} (`,

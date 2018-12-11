@@ -1,9 +1,7 @@
 const uuidv4 = require('uuid/v4');
 const { Client } = require('pg');
-const { createModel, Field } = require('../model');
-const { float, date, int } = require('../model/transform');
 const { createSchema } = require('../model/schema');
-const { createRevisionedStorageAdapter } = require('../storage/adapter');
+const { storages } = require('./model');
 
 function createTestDB() {
   const DB_NAME = uuidv4();
@@ -35,54 +33,16 @@ function createTestDB() {
 }
 
 function bootstrapDB(db) {
-  const Price = createModel(
-    [Field.value('amount', float()), Field.value('currency')],
-    'price'
-  );
-
-  const PriceStorage = createRevisionedStorageAdapter(Price);
-
-  const Wheel = createModel(
-    [Field.value('size', float()), Field.value('thickness', float())],
-    'wheel'
-  );
-
-  const WheelStorage = createRevisionedStorageAdapter(Wheel);
-
-  const Bike = createModel(
-    [
-      Field.value('brand'),
-      Field.value('wheelSize', int(10)),
-      Field.value('deliveryDate', date()),
-      Field.model('price', Price, PriceStorage),
-      Field.list('wheels', Wheel, WheelStorage),
-    ],
-    'bike'
-  );
-
-  const BikeStorage = createRevisionedStorageAdapter(Bike);
+  const { PriceStorage, WheelStorage, BikeStorage } = storages;
 
   beforeAll(async () => {
-    for (const Model of [Price, Wheel, Bike]) {
-      const statements = createSchema(Model);
+    for (const StorageAdapter of [PriceStorage, WheelStorage, BikeStorage]) {
+      const statements = createSchema(StorageAdapter);
       for (const statement of statements) {
         await db.query(statement);
       }
     }
   });
-
-  return {
-    models: {
-      Bike,
-      Price,
-      Wheel,
-    },
-    storages: {
-      BikeStorage,
-      PriceStorage,
-      WheelStorage,
-    },
-  };
 }
 
 module.exports = {

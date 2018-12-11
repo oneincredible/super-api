@@ -11,8 +11,8 @@ function noop(value) {
   return value;
 }
 
-function createRevisionedStorageAdapter(Model) {
-  const tableName = Model.name;
+function createRevisionedStorageAdapter(Model, name) {
+  const tableName = name;
   const valueFields = Model.fields.filter(field => field.type === Type.VALUE);
   const listFields = Model.fields.filter(field => field.type === Type.LIST);
   const modelFields = Model.fields.filter(field => field.type === Type.MODEL);
@@ -29,9 +29,9 @@ function createRevisionedStorageAdapter(Model) {
     const relations = Object.create(null);
     for (const field of listFields) {
       const RelationsStorageAdapter = createRelationStorageAdapter(
-        field.StorageAdapter,
         Model,
-        field
+        field,
+        name
       );
       relations[field.name] = new RelationsStorageAdapter(db);
     }
@@ -45,6 +45,14 @@ function createRevisionedStorageAdapter(Model) {
   };
 
   class RevisionedStorageAdapter extends Storage {
+    static getName() {
+      return name;
+    }
+
+    static getModel() {
+      return Model;
+    }
+
     constructor(db) {
       super(db);
       this.composed = createComposedStorage(db);
