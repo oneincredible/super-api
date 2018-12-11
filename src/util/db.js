@@ -40,14 +40,14 @@ function bootstrapDB(db) {
     'price'
   );
 
-  const PriceStorage = createStorage(Price);
+  const PriceStorage = createStorage(Price, 'price');
 
   const Wheel = createModel(
     [Field.value('size', float()), Field.value('thickness', float())],
     'wheel'
   );
 
-  const WheelStorage = createStorage(Wheel);
+  const WheelStorage = createStorage(Wheel, 'wheel');
 
   const Bike = createModel(
     [
@@ -60,7 +60,7 @@ function bootstrapDB(db) {
     'bike'
   );
 
-  const BikeStorage = createStorage(Bike);
+  const BikeStorage = createStorage(Bike, 'bike');
 
   beforeAll(async () => {
     for (const Model of [Price, Wheel, Bike]) {
