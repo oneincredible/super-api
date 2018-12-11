@@ -3,7 +3,7 @@ const { Client } = require('pg');
 const { createModel, Field } = require('../model');
 const { float, date, int } = require('../model/transform');
 const { createSchema } = require('../model/schema');
-const { createRevisionedStorageAdapter } = require('../storage/adapter');
+const { createStorage } = require('../storage/adapter');
 
 function createTestDB() {
   const DB_NAME = uuidv4();
@@ -40,14 +40,14 @@ function bootstrapDB(db) {
     'price'
   );
 
-  const PriceStorage = createRevisionedStorageAdapter(Price);
+  const PriceStorage = createStorage(Price);
 
   const Wheel = createModel(
     [Field.value('size', float()), Field.value('thickness', float())],
     'wheel'
   );
 
-  const WheelStorage = createRevisionedStorageAdapter(Wheel);
+  const WheelStorage = createStorage(Wheel);
 
   const Bike = createModel(
     [
@@ -60,7 +60,7 @@ function bootstrapDB(db) {
     'bike'
   );
 
-  const BikeStorage = createRevisionedStorageAdapter(Bike);
+  const BikeStorage = createStorage(Bike);
 
   beforeAll(async () => {
     for (const Model of [Price, Wheel, Bike]) {
