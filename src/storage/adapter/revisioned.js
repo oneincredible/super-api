@@ -29,7 +29,6 @@ function createRevisionedStorageAdapter(Model) {
     const relations = Object.create(null);
     for (const field of listFields) {
       const RelationsStorageAdapter = createRelationStorageAdapter(
-        field.StorageAdapter,
         Model,
         field
       );

@@ -1,6 +1,6 @@
 const { Storage } = require('../storage');
 
-function createRelationStorageAdapter(ChildStorageAdapter, Model, field) {
+function createRelationStorageAdapter(Model, field) {
   const tableName = `${Model.name}_${field.name}`;
   const parent = Model.name;
   const child = field.Model.name;
@@ -31,7 +31,7 @@ function createRelationStorageAdapter(ChildStorageAdapter, Model, field) {
   class RelationStorageAdapter extends Storage {
     constructor(db) {
       super(db);
-      this.storage = new ChildStorageAdapter(db);
+      this.storage = new field.StorageAdapter(db);
     }
 
     async fetch(parentId) {
