@@ -6,4 +6,4 @@ exports[`Query modules #createPromoteRevision creates a query builder based on m
 
 exports[`Query modules #createRevokeRevision creates a query builder based on model 1`] = `"DELETE FROM \\"video\\" WHERE id = $1"`;
 
-exports[`Query modules #createStoreRevision creates a query builder based on model 1`] = `"INSERT INTO \\"video_revision\\" (id, name, length, rate, revision) SELECT $1, $2, $3, $4, COALESCE(MAX(revision) + 1, 1) FROM \\"video_revision\\" WHERE id = $1 RETURNING revision"`;
+exports[`Query modules #createStoreRevision creates a query builder based on model 1`] = `"INSERT INTO \\"video_revision\\" (id, name, length, rate, revision) SELECT $1, $2, $3, $4, COALESCE(MAX(revision) + 1, 1) FROM \\"video_revision\\" WHERE id = $1"`;
