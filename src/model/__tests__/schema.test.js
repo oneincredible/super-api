@@ -1,6 +1,7 @@
 const { createModel, Field } = require('..');
 const { float, date, int } = require('../transform');
 const { createSchema } = require('../schema');
+const { createStorage } = require('../../storage');
 
 describe('Schema generation', () => {
   const Price = createModel(
@@ -24,10 +25,14 @@ describe('Schema generation', () => {
     'bike'
   );
 
-  [Price, Wheel, Bike].forEach(Model => {
-    describe(Model.name, () => {
+  [
+    createStorage(Price, 'price'),
+    createStorage(Wheel, 'wheel'),
+    createStorage(Bike, 'bike'),
+  ].forEach(StorageAdapter => {
+    describe(StorageAdapter.getName(), () => {
       it('generates expected schema', () => {
-        const statements = createSchema(Model);
+        const statements = createSchema(StorageAdapter);
         statements.forEach(statement => {
           expect(statement).toMatchSnapshot();
         });

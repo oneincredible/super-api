@@ -46,10 +46,10 @@ function createReferenceColumn(field) {
   return parts.join(' ');
 }
 
-function createSchema(Model) {
-  ensureNamed(Model);
-
+function createSchema(StorageAdapter) {
   const statements = [];
+
+  const Model = StorageAdapter.getModel();
 
   const valueFields = Model.fields.filter(field => field.type === Type.VALUE);
   valueFields.shift(); // Bump off Id.
