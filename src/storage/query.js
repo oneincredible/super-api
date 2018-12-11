@@ -34,7 +34,6 @@ function createStoreRevision(Model, name) {
     'SELECT ' + [...placeholders, 'COALESCE(MAX(revision) + 1, 1)'].join(', '),
     `FROM "${revisionTable}"`,
     'WHERE id = $1',
-    'RETURNING revision',
   ].join(' ');
 
   return function createQuery(model) {
