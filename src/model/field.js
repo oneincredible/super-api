@@ -11,7 +11,6 @@ const Type = {
   VALUE: Symbol('value field'),
   LIST: Symbol('list field'),
   MODEL: Symbol('model field'),
-  REFERENCE: Symbol('reference field'),
 };
 
 function value(name, transform = noop) {
@@ -60,22 +59,9 @@ function model(name, Model, StorageAdapter) {
   };
 }
 
-function reference(name, Model) {
-  return {
-    type: Type.REFERENCE,
-    name,
-
-    encode: noop,
-    decode: noop,
-
-    Model,
-  };
-}
-
 module.exports = {
   Type,
   value,
   list,
   model,
-  reference,
 };
