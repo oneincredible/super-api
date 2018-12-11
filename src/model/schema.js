@@ -66,7 +66,7 @@ function createSchema(StorageAdapter) {
       `CREATE TABLE "${revisionTable}" (`,
       [
         'id uuid NOT NULL',
-        'revision integer NOT NULL',
+        'revision bigint NOT NULL',
         ...modelFields.map(createReferenceColumn),
         ...valueFields.map(createValueColumn),
         'UNIQUE(id, revision)',
@@ -82,7 +82,7 @@ function createSchema(StorageAdapter) {
       `CREATE TABLE "${mainTable}" (`,
       [
         'id uuid NOT NULL',
-        'revision integer NOT NULL',
+        'revision bigint NOT NULL',
         'PRIMARY KEY (id)',
         `FOREIGN KEY (id, revision) REFERENCES ${revisionTable} (id, revision)`,
       ]

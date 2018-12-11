@@ -1,5 +1,5 @@
 const { createTestDB, bootstrapDB } = require('../../util/db');
-const { createBike, storages } = require('../../util/model');
+const { createBike, createPrice, storages } = require('../../util/model');
 const { Storage } = require('../storage');
 
 describe('Storage', () => {
@@ -24,6 +24,27 @@ describe('Storage', () => {
 
     it('provides interface for related Models', () => {
       expect(storage.relations.wheels).toBeInstanceOf(Storage);
+    });
+
+    describe('revisions', () => {
+      it('are created sequentially', async () => {
+        const storage = new storages.PriceStorage(db);
+        const price = createPrice();
+
+        const jobs = [];
+        for (let i = 0; i < 20; i++) {
+          jobs.push(storage.store(price));
+        }
+
+        await Promise.all(jobs);
+
+        const res = await db.query(
+          'SELECT * FROM price_revision WHERE id = $1',
+          [price.id]
+        );
+
+        expect(res.rowCount).toEqual(20);
+      });
     });
 
     describe('#fetch', () => {
@@ -65,8 +86,6 @@ describe('Storage', () => {
           [bike.id]
         );
         expect(res.rowCount).toEqual(1);
-        const row = res.rows[0];
-        expect(row.revision).toEqual(1);
       });
 
       it('stores model relations', async () => {
@@ -75,8 +94,6 @@ describe('Storage', () => {
           [bike.price.id]
         );
         expect(res.rowCount).toEqual(1);
-        const row = res.rows[0];
-        expect(row.revision).toEqual(1);
       });
 
       describe('when storing same object again', () => {
@@ -92,10 +109,7 @@ describe('Storage', () => {
           );
           expect(res.rowCount).toEqual(2);
           expect(res.rows[0].brand).toEqual('Crescent');
-          expect(res.rows[0].revision).toEqual(1);
-
           expect(res.rows[1].brand).toEqual('DSB');
-          expect(res.rows[1].revision).toEqual(2);
         });
       });
     });
