@@ -37,14 +37,12 @@ function createTestDB() {
 function bootstrapDB(db) {
   const Price = createModel(
     [Field.value('amount', float()), Field.value('currency')],
-    'price'
   );
 
   const PriceStorage = createStorage(Price, 'price');
 
   const Wheel = createModel(
     [Field.value('size', float()), Field.value('thickness', float())],
-    'wheel'
   );
 
   const WheelStorage = createStorage(Wheel, 'wheel');
@@ -57,7 +55,6 @@ function bootstrapDB(db) {
       Field.model('price', Price, PriceStorage),
       Field.list('wheels', Wheel, WheelStorage),
     ],
-    'bike'
   );
 
   const BikeStorage = createStorage(Bike, 'bike');

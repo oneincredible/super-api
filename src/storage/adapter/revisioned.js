@@ -30,7 +30,8 @@ function createRevisionedStorageAdapter(Model, name) {
     for (const field of listFields) {
       const RelationsStorageAdapter = createRelationStorageAdapter(
         Model,
-        field
+        field,
+        name,
       );
       relations[field.name] = new RelationsStorageAdapter(db);
     }

@@ -1,28 +1,27 @@
 const { Storage } = require('../storage');
 
-function createRelationStorageAdapter(Model, field) {
-  const tableName = `${Model.name}_${field.name}`;
-  const parent = Model.name;
-  const child = field.Model.name;
+function createRelationStorageAdapter(Model, field, parentName) {
+  const childName = field.StorageAdapter.getName();
+  const tableName = `${parentName}_${field.name}`;
 
   const Query = {
     fetch(parentId) {
       return {
-        text: `SELECT ${child}_id AS id FROM ${tableName} WHERE ${parent}_id = $1`,
+        text: `SELECT ${childName}_id AS id FROM ${tableName} WHERE ${parentName}_id = $1`,
         values: [parentId],
       };
     },
 
     add(parentId, childId) {
       return {
-        text: `INSERT INTO ${tableName} (${parent}_id, ${child}_id) VALUES($1, $2)`,
+        text: `INSERT INTO ${tableName} (${parentName}_id, ${childName}_id) VALUES($1, $2)`,
         values: [parentId, childId],
       };
     },
 
     remove(parentId, childId) {
       return {
-        text: `DELETE FROM ${tableName} WHERE ${parent}_id = $1 AND ${child}_id = $2`,
+        text: `DELETE FROM ${tableName} WHERE ${parentName}_id = $1 AND ${childName}_id = $2`,
         values: [parentId, childId],
       };
     },
