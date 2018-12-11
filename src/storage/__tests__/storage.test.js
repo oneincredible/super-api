@@ -60,6 +60,16 @@ describe('Storage', () => {
         expect(row.revision).toEqual(1);
       });
 
+      it('stores model relations', async () => {
+        const res = await db.query(
+          'SELECT * FROM price_revision WHERE id = $1',
+          [bike.price.id]
+        );
+        expect(res.rowCount).toEqual(1);
+        const row = res.rows[0];
+        expect(row.revision).toEqual(1);
+      });
+
       describe('when storing same object again', () => {
         beforeEach(async () => {
           bike.brand = 'DSB';
