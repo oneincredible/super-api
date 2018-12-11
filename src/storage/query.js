@@ -25,7 +25,7 @@ function createStoreRevision(Model, name) {
   const revisionTable = `${name}_revision`;
 
   const fields = Model.fields.filter(field => field.columnName);
-  const columns = ['revision'].concat(fields.map(field => field.columnName));
+  const columns = fields.map(field => field.columnName);
   const placeholders = columns.map((name, index) => '$' + (index + 1));
 
   const text = [
@@ -34,10 +34,10 @@ function createStoreRevision(Model, name) {
     'VALUES (' + placeholders.join(', ') + ')',
   ].join(' ');
 
-  return function createQuery(model, revision) {
+  return function createQuery(model) {
     return {
       text,
-      values: [revision].concat(fields.map(field => field.columnValue(model))),
+      values: fields.map(field => field.columnValue(model)),
     };
   };
 }

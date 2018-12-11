@@ -32,7 +32,7 @@ describe('Storage', () => {
         const price = createPrice();
 
         const jobs = [];
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 100; i++) {
           jobs.push(storage.store(price));
         }
 
@@ -43,7 +43,7 @@ describe('Storage', () => {
           [price.id]
         );
 
-        expect(res.rowCount).toEqual(20);
+        expect(res.rowCount).toEqual(100);
       });
     });
 
