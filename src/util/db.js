@@ -4,6 +4,7 @@ const { createModel, Field } = require('../model');
 const { float, date, int } = require('../model/transform');
 const { createSchema } = require('../model/schema');
 const { createStorage } = require('../storage/adapter');
+const { models, storages } = require('./model');
 
 function createTestDB() {
   const DB_NAME = uuidv4();
@@ -35,29 +36,7 @@ function createTestDB() {
 }
 
 function bootstrapDB(db) {
-  const Price = createModel([
-    Field.value('amount', float()),
-    Field.value('currency'),
-  ]);
-
-  const PriceStorage = createStorage(Price, 'price');
-
-  const Wheel = createModel([
-    Field.value('size', float()),
-    Field.value('thickness', float()),
-  ]);
-
-  const WheelStorage = createStorage(Wheel, 'wheel');
-
-  const Bike = createModel([
-    Field.value('brand'),
-    Field.value('wheelSize', int(10)),
-    Field.value('deliveryDate', date()),
-    Field.model('price', Price, PriceStorage),
-    Field.list('wheels', Wheel, WheelStorage),
-  ]);
-
-  const BikeStorage = createStorage(Bike, 'bike');
+  const { PriceStorage, WheelStorage, BikeStorage } = storages;
 
   beforeAll(async () => {
     for (const StorageAdapter of [PriceStorage, WheelStorage, BikeStorage]) {
@@ -67,19 +46,6 @@ function bootstrapDB(db) {
       }
     }
   });
-
-  return {
-    models: {
-      Bike,
-      Price,
-      Wheel,
-    },
-    storages: {
-      BikeStorage,
-      PriceStorage,
-      WheelStorage,
-    },
-  };
 }
 
 module.exports = {
