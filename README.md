@@ -39,12 +39,12 @@ Super API is a hyper-opinionated framework for building REST APIs.
   ```javascript
   export const ChildModel = Model([
     Field.value('name'),
-  ], 'child');
+  ]);
 
   export const ParentModel = Model([
     Field.model('child', ChildModel),
     Field.list('children', ChildModel)
-  ], 'parent');
+  ]);
   ```
 
 
