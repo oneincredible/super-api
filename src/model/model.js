@@ -20,14 +20,13 @@ function createDeserializer(fields) {
   };
 }
 
-function createModel(fieldSpec, name) {
+function createModel(fieldSpec) {
   const fields = [value('id'), ...fieldSpec];
 
   const encode = createSerializer(fields);
   const decode = createDeserializer(fields);
 
   return {
-    name,
     fields,
     encode,
     decode,
