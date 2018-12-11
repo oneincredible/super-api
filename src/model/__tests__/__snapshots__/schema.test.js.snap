@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Schema generation bike generates expected schema 1`] = `
-"CREATE TABLE bike_revision (
+"CREATE TABLE \\"bike_revision\\" (
   id uuid NOT NULL,
   revision integer NOT NULL,
   price_id uuid REFERENCES price (id),
@@ -13,7 +13,7 @@ exports[`Schema generation bike generates expected schema 1`] = `
 `;
 
 exports[`Schema generation bike generates expected schema 2`] = `
-"CREATE TABLE bike (
+"CREATE TABLE \\"bike\\" (
   id uuid NOT NULL,
   revision integer NOT NULL,
   PRIMARY KEY (id),
@@ -22,7 +22,7 @@ exports[`Schema generation bike generates expected schema 2`] = `
 `;
 
 exports[`Schema generation bike generates expected schema 3`] = `
-"CREATE TABLE bike_wheels (
+"CREATE TABLE \\"bike_wheels\\" (
   bike_id uuid NOT NULL REFERENCES bike (id),
   wheel_id uuid NOT NULL REFERENCES wheel (id),
   PRIMARY KEY (bike_id, wheel_id)
@@ -30,7 +30,7 @@ exports[`Schema generation bike generates expected schema 3`] = `
 `;
 
 exports[`Schema generation price generates expected schema 1`] = `
-"CREATE TABLE price_revision (
+"CREATE TABLE \\"price_revision\\" (
   id uuid NOT NULL,
   revision integer NOT NULL,
   amount float,
@@ -40,7 +40,7 @@ exports[`Schema generation price generates expected schema 1`] = `
 `;
 
 exports[`Schema generation price generates expected schema 2`] = `
-"CREATE TABLE price (
+"CREATE TABLE \\"price\\" (
   id uuid NOT NULL,
   revision integer NOT NULL,
   PRIMARY KEY (id),
@@ -49,7 +49,7 @@ exports[`Schema generation price generates expected schema 2`] = `
 `;
 
 exports[`Schema generation wheel generates expected schema 1`] = `
-"CREATE TABLE wheel_revision (
+"CREATE TABLE \\"wheel_revision\\" (
   id uuid NOT NULL,
   revision integer NOT NULL,
   size float,
@@ -59,7 +59,7 @@ exports[`Schema generation wheel generates expected schema 1`] = `
 `;
 
 exports[`Schema generation wheel generates expected schema 2`] = `
-"CREATE TABLE wheel (
+"CREATE TABLE \\"wheel\\" (
   id uuid NOT NULL,
   revision integer NOT NULL,
   PRIMARY KEY (id),

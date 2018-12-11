@@ -63,7 +63,7 @@ function createSchema(StorageAdapter) {
 
   statements.push(
     [
-      `CREATE TABLE ${revisionTable} (`,
+      `CREATE TABLE "${revisionTable}" (`,
       [
         'id uuid NOT NULL',
         'revision integer NOT NULL',
@@ -79,7 +79,7 @@ function createSchema(StorageAdapter) {
 
   statements.push(
     [
-      `CREATE TABLE ${mainTable} (`,
+      `CREATE TABLE "${mainTable}" (`,
       [
         'id uuid NOT NULL',
         'revision integer NOT NULL',
@@ -100,7 +100,7 @@ function createSchema(StorageAdapter) {
     const child = listField.StorageAdapter.getName();
     statements.push(
       [
-        `CREATE TABLE ${listTable} (`,
+        `CREATE TABLE "${listTable}" (`,
         [
           `${parent}_id uuid NOT NULL REFERENCES ${parent} (id)`,
           `${child}_id uuid NOT NULL REFERENCES ${child} (id)`,
