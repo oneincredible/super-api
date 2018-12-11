@@ -80,7 +80,7 @@ describe('Storage', () => {
         await storage.store(bike);
       });
 
-      it('inserts row in DB with revision 1', async () => {
+      it('inserts row in DB', async () => {
         const res = await db.query(
           'SELECT * FROM bike_revision WHERE id = $1',
           [bike.id]
