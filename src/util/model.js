@@ -1,4 +1,31 @@
 const uuidv4 = require('uuid/v4');
+const { createModel, Field } = require('../model');
+const { float, date, int } = require('../model/transform');
+const { createStorage } = require('../storage/adapter');
+
+const Price = createModel([
+  Field.value('amount', float()),
+  Field.value('currency'),
+]);
+
+const PriceStorage = createStorage(Price, 'price');
+
+const Wheel = createModel([
+  Field.value('size', float()),
+  Field.value('thickness', float()),
+]);
+
+const WheelStorage = createStorage(Wheel, 'wheel');
+
+const Bike = createModel([
+  Field.value('brand'),
+  Field.value('wheelSize', int(10)),
+  Field.value('deliveryDate', date()),
+  Field.model('price', Price, PriceStorage),
+  Field.list('wheels', Wheel, WheelStorage),
+]);
+
+const BikeStorage = createStorage(Bike, 'bike');
 
 function createBike() {
   return {
@@ -31,4 +58,14 @@ module.exports = {
   createBike,
   createPrice,
   createWheel,
+  models: {
+    Bike,
+    Wheel,
+    Price,
+  },
+  storages: {
+    BikeStorage,
+    PriceStorage,
+    WheelStorage,
+  },
 };
