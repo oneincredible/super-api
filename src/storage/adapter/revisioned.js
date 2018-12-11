@@ -31,7 +31,7 @@ function createRevisionedStorageAdapter(Model, name) {
       const RelationsStorageAdapter = createRelationStorageAdapter(
         Model,
         field,
-        name,
+        name
       );
       relations[field.name] = new RelationsStorageAdapter(db);
     }
