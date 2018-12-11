@@ -1,5 +1,6 @@
 const { createTestDB, bootstrapDB } = require('../../util/db');
 const { createBike, storages } = require('../../util/model');
+const { Storage } = require('../storage');
 
 describe('Storage', () => {
   const db = createTestDB();
@@ -15,6 +16,14 @@ describe('Storage', () => {
 
     beforeEach(() => {
       bike = createBike();
+    });
+
+    it('provides interface for composed Models', () => {
+      expect(storage.composed.price).toBeInstanceOf(Storage);
+    });
+
+    it('provides interface for related Models', () => {
+      expect(storage.relations.wheels).toBeInstanceOf(Storage);
     });
 
     describe('#fetch', () => {
