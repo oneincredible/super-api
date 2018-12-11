@@ -1,5 +1,10 @@
 const { createTestDB, bootstrapDB } = require('../../util/db');
-const { createBike, createWheel, models, storages } = require('../../util/model');
+const {
+  createBike,
+  createWheel,
+  models,
+  storages,
+} = require('../../util/model');
 const { createStorageRouter } = require('../router');
 const express = require('express');
 const request = require('supertest');
