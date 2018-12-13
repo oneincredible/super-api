@@ -7,10 +7,6 @@ const {
 } = require('../query');
 const { Type } = require('../../model/field');
 
-function noop(value) {
-  return value;
-}
-
 function createRevisionedStorageAdapter(Model, name) {
   const tableName = name;
   const valueFields = Model.fields.filter(field => field.type === Type.VALUE);
@@ -59,7 +55,7 @@ function createRevisionedStorageAdapter(Model, name) {
       this.relations = createRelationsStorage(db);
     }
 
-    async fetch(modelId, prepare = noop) {
+    async fetch(modelId) {
       const result = await this.db.query(Query.fetchRevision(modelId));
       if (result.rowCount === 0) {
         return null;
@@ -80,7 +76,7 @@ function createRevisionedStorageAdapter(Model, name) {
         }),
       ]);
 
-      return prepare(model);
+      return model;
     }
 
     async store(model) {
