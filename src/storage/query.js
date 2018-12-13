@@ -1,15 +1,19 @@
+function quote(name) {
+  return `"${name}"`;
+}
+
 function createFetchRevision(Model, name) {
   const parentTable = name;
   const revisionTable = `${name}_revision`;
 
   const fields = Model.fields
     .filter(field => field.columnName)
-    .map(field => `r.${field.columnName}`);
+    .map(field => `r.${quote(field.columnName)}`);
 
   const text = [
     'SELECT ' + fields.join(', '),
-    `FROM "${revisionTable}" r`,
-    `JOIN "${parentTable}" p ON p.id = r.id AND p.revision = r.revision`,
+    `FROM ${quote(revisionTable)} r`,
+    `JOIN ${quote(parentTable)} p ON p.id = r.id AND p.revision = r.revision`,
     'WHERE p.id = $1',
   ].join(' ');
 
@@ -30,7 +34,7 @@ function createStoreRevision(Model, name) {
 
   const text = [
     `INSERT INTO "${revisionTable}"`,
-    '(' + columns.join(', ') + ')',
+    '(' + columns.map(quote).join(', ') + ')',
     'VALUES (' + placeholders.join(', ') + ')',
   ].join(' ');
 
@@ -69,6 +73,7 @@ function createRevokeRevision(name) {
 }
 
 module.exports = {
+  quote,
   createFetchRevision,
   createStoreRevision,
   createPromoteRevision,
