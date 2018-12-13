@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Schema generation bike generates expected schema 1`] = `
-"CREATE TABLE bike_revision (
+"CREATE TABLE \\"bike_revision\\" (
   id uuid NOT NULL,
-  revision integer NOT NULL,
+  revision BIGSERIAL,
   price_id uuid REFERENCES price (id),
   brand text,
   wheel_size integer,
@@ -13,16 +13,16 @@ exports[`Schema generation bike generates expected schema 1`] = `
 `;
 
 exports[`Schema generation bike generates expected schema 2`] = `
-"CREATE TABLE bike (
+"CREATE TABLE \\"bike\\" (
   id uuid NOT NULL,
-  revision integer NOT NULL,
+  revision BIGINT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id, revision) REFERENCES bike_revision (id, revision)
 );"
 `;
 
 exports[`Schema generation bike generates expected schema 3`] = `
-"CREATE TABLE bike_wheels (
+"CREATE TABLE \\"bike_wheels\\" (
   bike_id uuid NOT NULL REFERENCES bike (id),
   wheel_id uuid NOT NULL REFERENCES wheel (id),
   PRIMARY KEY (bike_id, wheel_id)
@@ -30,9 +30,9 @@ exports[`Schema generation bike generates expected schema 3`] = `
 `;
 
 exports[`Schema generation price generates expected schema 1`] = `
-"CREATE TABLE price_revision (
+"CREATE TABLE \\"price_revision\\" (
   id uuid NOT NULL,
-  revision integer NOT NULL,
+  revision BIGSERIAL,
   amount float,
   currency text,
   UNIQUE(id, revision)
@@ -40,18 +40,18 @@ exports[`Schema generation price generates expected schema 1`] = `
 `;
 
 exports[`Schema generation price generates expected schema 2`] = `
-"CREATE TABLE price (
+"CREATE TABLE \\"price\\" (
   id uuid NOT NULL,
-  revision integer NOT NULL,
+  revision BIGINT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id, revision) REFERENCES price_revision (id, revision)
 );"
 `;
 
 exports[`Schema generation wheel generates expected schema 1`] = `
-"CREATE TABLE wheel_revision (
+"CREATE TABLE \\"wheel_revision\\" (
   id uuid NOT NULL,
-  revision integer NOT NULL,
+  revision BIGSERIAL,
   size float,
   thickness float,
   UNIQUE(id, revision)
@@ -59,9 +59,9 @@ exports[`Schema generation wheel generates expected schema 1`] = `
 `;
 
 exports[`Schema generation wheel generates expected schema 2`] = `
-"CREATE TABLE wheel (
+"CREATE TABLE \\"wheel\\" (
   id uuid NOT NULL,
-  revision integer NOT NULL,
+  revision BIGINT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id, revision) REFERENCES wheel_revision (id, revision)
 );"
