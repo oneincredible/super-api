@@ -1,4 +1,5 @@
 const { Type } = require('./field');
+const { quote } = require('../storage/query');
 
 function ensureStorageAdapter(field) {
   if (!field.StorageAdapter) {
@@ -29,7 +30,7 @@ function decideType(field) {
 }
 
 function createValueColumn(field) {
-  const parts = [field.columnName, decideType(field)];
+  const parts = [quote(field.columnName), decideType(field)];
 
   return parts.join(' ');
 }
@@ -38,9 +39,9 @@ function createReferenceColumn(field) {
   ensureStorageAdapter(field);
 
   const parts = [
-    field.columnName,
+    quote(field.columnName),
     'uuid',
-    `REFERENCES ${field.StorageAdapter.getName()} (id)`,
+    `REFERENCES ${quote(field.StorageAdapter.getName())} (id)`,
   ];
 
   return parts.join(' ');
@@ -63,7 +64,7 @@ function createSchema(StorageAdapter) {
 
   statements.push(
     [
-      `CREATE TABLE "${revisionTable}" (`,
+      `CREATE TABLE ${quote(revisionTable)} (`,
       [
         'id uuid NOT NULL',
         'revision BIGSERIAL',
@@ -79,12 +80,14 @@ function createSchema(StorageAdapter) {
 
   statements.push(
     [
-      `CREATE TABLE "${mainTable}" (`,
+      `CREATE TABLE ${quote(mainTable)} (`,
       [
         'id uuid NOT NULL',
         'revision BIGINT NOT NULL',
         'PRIMARY KEY (id)',
-        `FOREIGN KEY (id, revision) REFERENCES ${revisionTable} (id, revision)`,
+        `FOREIGN KEY (id, revision) REFERENCES ${quote(
+          revisionTable
+        )} (id, revision)`,
       ]
         .map(pad(2))
         .join(',\n'),
@@ -100,10 +103,10 @@ function createSchema(StorageAdapter) {
     const child = listField.StorageAdapter.getName();
     statements.push(
       [
-        `CREATE TABLE "${listTable}" (`,
+        `CREATE TABLE ${quote(listTable)} (`,
         [
-          `${parent}_id uuid NOT NULL REFERENCES ${parent} (id)`,
-          `${child}_id uuid NOT NULL REFERENCES ${child} (id)`,
+          `${parent}_id uuid NOT NULL REFERENCES ${quote(parent)} (id)`,
+          `${child}_id uuid NOT NULL REFERENCES ${quote(child)} (id)`,
           `PRIMARY KEY (${parent}_id, ${child}_id)`,
         ]
           .map(pad(2))
