@@ -46,6 +46,24 @@ function createRelationRouter(name, relationStorage) {
   return router;
 }
 
+function createAuthorizationRoute(sessionStorage) {
+  return function checkAuthorization(req, res, next) {
+    const auth = req.headers.authorization;
+    if (auth) {
+
+      return next();
+    }
+
+    res.statusCode = 401;
+    res.send({
+      error: {
+        message: 'Authorization required.',
+      },
+    });
+  };
+}
+
+
 function createStorageRouter(Model, storage) {
   const router = express.Router();
   router.use(express.json());
@@ -81,5 +99,6 @@ function createStorageRouter(Model, storage) {
 }
 
 module.exports = {
+  createAuthorizationRoute,
   createStorageRouter,
 };

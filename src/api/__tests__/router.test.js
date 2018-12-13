@@ -5,7 +5,7 @@ const {
   models,
   storages,
 } = require('../../util/model');
-const { createStorageRouter } = require('../router');
+const { createAuthorizationRoute, createStorageRouter } = require('../router');
 const express = require('express');
 const request = require('supertest');
 
@@ -14,10 +14,24 @@ describe('Router', () => {
   bootstrapDB(db);
   const bikeStorage = new storages.BikeStorage(db);
   const wheelStorage = new storages.WheelStorage(db);
+  const sessionStorage = new storages.SessionStorage(db);
   const router = createStorageRouter(models.Bike, bikeStorage);
+  const requireAuth = createAuthorizationRoute(sessionStorage);
 
   const app = express();
   app.use('/', router);
+  app.use('/auth', requireAuth);
+
+  describe('Authorization', () => {
+    it('denies all access without Auth header', done => {
+        request(app)
+          .get('/auth/foo')
+          .expect(401)
+          .expect({ error: { message: 'Authorization required.' } })
+          .end(done);
+    });
+  });
+
 
   describe('GET /', () => {
     describe('with malformed id', () => {
