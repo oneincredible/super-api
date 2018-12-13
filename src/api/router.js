@@ -22,7 +22,7 @@ function createRelationRouter(name, relationStorage) {
   return router;
 }
 
-function createAuthorizationRoute(sessionStorage) {
+function createAuthorizationLayer(sessionStorage) {
   return async function checkAuthorization(req, res, next) {
     const auth = req.headers.authorization;
     if (!auth) {
@@ -97,6 +97,6 @@ function createStorageRouter(Model, storage) {
 }
 
 module.exports = {
-  createAuthorizationRoute,
+  createAuthorizationLayer,
   createStorageRouter,
 };

@@ -5,7 +5,7 @@ const {
   models,
   storages,
 } = require('../../util/model');
-const { createAuthorizationRoute, createStorageRouter } = require('../router');
+const { createAuthorizationLayer, createStorageRouter } = require('../router');
 const express = require('express');
 const request = require('supertest');
 
@@ -16,7 +16,7 @@ describe('Router', () => {
   const wheelStorage = new storages.WheelStorage(db);
   const sessionStorage = new storages.SessionStorage(db);
   const router = createStorageRouter(models.Bike, bikeStorage);
-  const requireAuth = createAuthorizationRoute(sessionStorage);
+  const requireAuth = createAuthorizationLayer(sessionStorage);
 
   const app = express();
   app.use('/', router);
