@@ -15,6 +15,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "bcrypt": "^3.0.2",
     "express": "^4.16.4",
     "pg": "^7.6.1"
   },

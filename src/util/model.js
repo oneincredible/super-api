@@ -1,7 +1,28 @@
 const uuidv4 = require('uuid/v4');
 const { createModel, Field } = require('../model');
-const { float, date, int } = require('../model/transform');
+const { float, date, int, password } = require('../model/transform');
 const { createStorage } = require('../storage/adapter');
+
+const Password = createModel([
+  Field.value('date'),
+  Field.value('hash'),
+]);
+
+const PasswordStorage = createStorage(Password, 'password');
+
+const User = createModel([
+  Field.value('name'),
+  Field.model('password', Password, PasswordStorage),
+]);
+
+const UserStorage = createStorage(User, 'user');
+
+const Session = createModel([
+  Field.value('token'),
+  Field.model('user', User, UserStorage),
+]);
+
+const SessionStorage = createStorage(Session, 'session');
 
 const Price = createModel([
   Field.value('amount', float()),
@@ -26,6 +47,13 @@ const Bike = createModel([
 ]);
 
 const BikeStorage = createStorage(Bike, 'bike');
+
+const BikeOwner = createModel([
+  Field.model('user', User, UserStorage),
+  Field.model('bike', Bike, BikeStorage),
+]);
+
+const BikeOwnerStorage = createStorage(BikeOwner, 'bike_owner');
 
 function createBike() {
   return {
@@ -60,11 +88,17 @@ module.exports = {
   createWheel,
   models: {
     Bike,
+    BikeOwner,
+    User,
     Wheel,
     Price,
   },
   storages: {
+    PasswordStorage,
+    UserStorage,
+    SessionStorage,
     BikeStorage,
+    BikeOwnerStorage,
     PriceStorage,
     WheelStorage,
   },
