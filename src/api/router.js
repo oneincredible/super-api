@@ -17,6 +17,35 @@ function ensureUUID(paramName) {
   };
 }
 
+function createRelationRouter(name, relationStorage) {
+  const router = express.Router();
+
+  router.put(
+    `/:parentId/${name}/:childId`,
+    ensureUUID('parentId'),
+    ensureUUID('childId'),
+    async (req, res) => {
+      const { parentId, childId } = req.params;
+      await relationStorage.add(parentId, childId);
+      res.statusCode = 201;
+      res.end();
+    }
+  );
+
+  router.delete(
+    `/:parentId/${name}/:childId`,
+    ensureUUID('parentId'),
+    ensureUUID('childId'),
+    async (req, res) => {
+      const { parentId, childId } = req.params;
+      await relationStorage.remove(parentId, childId);
+      res.end();
+    }
+  );
+
+  return router;
+}
+
 function createStorageRouter(Model, storage) {
   const router = express.Router();
   router.use(express.json());
@@ -43,30 +72,10 @@ function createStorageRouter(Model, storage) {
     res.send(Model.encode(result));
   });
 
-  for (const [name, relatedStorage] of Object.entries(storage.relations)) {
-    router.put(
-      `/:parentId/${name}/:childId`,
-      ensureUUID('parentId'),
-      ensureUUID('childId'),
-      async (req, res) => {
-        const { parentId, childId } = req.params;
-        await relatedStorage.add(parentId, childId);
-        res.statusCode = 201;
-        res.end();
-      }
-    );
-
-    router.delete(
-      `/:parentId/${name}/:childId`,
-      ensureUUID('parentId'),
-      ensureUUID('childId'),
-      async (req, res) => {
-        const { parentId, childId } = req.params;
-        await relatedStorage.remove(parentId, childId);
-        res.end();
-      }
-    );
-  }
+  Object.entries(storage.relations).forEach(([name, storage]) => {
+    const relationRouter = createRelationRouter(name, storage);
+    router.use(relationRouter);
+  });
 
   return router;
 }
