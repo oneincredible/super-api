@@ -24,23 +24,31 @@ describe('Router', () => {
 
   describe('Authorization', () => {
     it('denies all access without Auth header', done => {
-        request(app)
-          .get('/auth/foo')
-          .expect(401)
-          .expect({ error: { message: 'Authorization required.' } })
-          .end(done);
+      request(app)
+        .get('/auth/foo')
+        .expect(401)
+        .expect({ error: { message: 'Authorization required.' } })
+        .end(done);
     });
 
     it('denies access with invalid Auth header', done => {
-        request(app)
-          .get('/auth/foo')
-          .set('Authorization', 'foo bar')
-          .expect(401)
-          .expect({ error: { message: 'Authorization required.' } })
-          .end(done);
+      request(app)
+        .get('/auth/foo')
+        .set('Authorization', 'foo bar')
+        .expect(400)
+        .expect({ error: { message: 'Unknown authorization type: foo.' } })
+        .end(done);
+    });
+
+    it('denies access with unknown Auth token', done => {
+      request(app)
+        .get('/auth/foo')
+        .set('Authorization', 'Bearer c591990c-ff28-11e8-b9e1-00090ffe0001')
+        .expect(401)
+        .expect({ error: { message: 'Invalid token.' } })
+        .end(done);
     });
   });
-
 
   describe('GET /', () => {
     describe('with malformed id', () => {

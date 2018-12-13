@@ -23,24 +23,44 @@ function createRelationRouter(name, relationStorage) {
 }
 
 function createAuthorizationRoute(sessionStorage) {
-  return function checkAuthorization(req, res, next) {
+  return async function checkAuthorization(req, res, next) {
     const auth = req.headers.authorization;
-    if (auth) {
-      const [type, token] = auth.split(' ');
-      if (type.toLowerCase() === 'bearer') {
-        return next();
-      }
+    if (!auth) {
+      res.statusCode = 401;
+      res.send({
+        error: {
+          message: 'Authorization required.',
+        },
+      });
+      return;
     }
 
-    res.statusCode = 401;
-    res.send({
-      error: {
-        message: 'Authorization required.',
-      },
-    });
+    const [type, token] = auth.split(' ');
+    if (type.toLowerCase() !== 'bearer') {
+      res.statusCode = 400;
+      res.send({
+        error: {
+          message: `Unknown authorization type: ${type}.`,
+        },
+      });
+      return;
+    }
+
+    const session = await sessionStorage.fetch(token);
+    if (!session) {
+      res.statusCode = 401;
+      res.send({
+        error: {
+          message: 'Invalid token.',
+        },
+      });
+      return;
+    }
+
+    req.session = session;
+    next();
   };
 }
-
 
 function createStorageRouter(Model, storage) {
   const router = express.Router();

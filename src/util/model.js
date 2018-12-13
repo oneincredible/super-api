@@ -1,10 +1,10 @@
 const uuidv4 = require('uuid/v4');
 const { createModel, Field } = require('../model');
-const { float, date, int, password } = require('../model/transform');
+const { float, date, int } = require('../model/transform');
 const { createStorage } = require('../storage/adapter');
 
 const Password = createModel([
-  Field.value('date'),
+  Field.value('date', date()),
   Field.value('hash'),
 ]);
 
