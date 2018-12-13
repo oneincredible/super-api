@@ -50,8 +50,10 @@ function createAuthorizationRoute(sessionStorage) {
   return function checkAuthorization(req, res, next) {
     const auth = req.headers.authorization;
     if (auth) {
-
-      return next();
+      const [type, token] = auth.split(' ');
+      if (type.toLowerCase() === 'bearer') {
+        return next();
+      }
     }
 
     res.statusCode = 401;
