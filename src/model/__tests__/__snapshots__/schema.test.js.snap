@@ -29,6 +29,44 @@ exports[`Schema generation bike generates expected schema 3`] = `
 );"
 `;
 
+exports[`Schema generation bike_owner generates expected schema 1`] = `
+"CREATE TABLE \\"bike_owner_revision\\" (
+  id uuid NOT NULL,
+  revision BIGSERIAL,
+  \\"user_id\\" uuid REFERENCES \\"user\\" (id),
+  \\"bike_id\\" uuid REFERENCES \\"bike\\" (id),
+  UNIQUE(id, revision)
+);"
+`;
+
+exports[`Schema generation bike_owner generates expected schema 2`] = `
+"CREATE TABLE \\"bike_owner\\" (
+  id uuid NOT NULL,
+  revision BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id, revision) REFERENCES \\"bike_owner_revision\\" (id, revision)
+);"
+`;
+
+exports[`Schema generation password generates expected schema 1`] = `
+"CREATE TABLE \\"password_revision\\" (
+  id uuid NOT NULL,
+  revision BIGSERIAL,
+  \\"date\\" timestamptz,
+  \\"hash\\" text,
+  UNIQUE(id, revision)
+);"
+`;
+
+exports[`Schema generation password generates expected schema 2`] = `
+"CREATE TABLE \\"password\\" (
+  id uuid NOT NULL,
+  revision BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id, revision) REFERENCES \\"password_revision\\" (id, revision)
+);"
+`;
+
 exports[`Schema generation price generates expected schema 1`] = `
 "CREATE TABLE \\"price_revision\\" (
   id uuid NOT NULL,
@@ -45,6 +83,44 @@ exports[`Schema generation price generates expected schema 2`] = `
   revision BIGINT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id, revision) REFERENCES \\"price_revision\\" (id, revision)
+);"
+`;
+
+exports[`Schema generation session generates expected schema 1`] = `
+"CREATE TABLE \\"session_revision\\" (
+  id uuid NOT NULL,
+  revision BIGSERIAL,
+  \\"user_id\\" uuid REFERENCES \\"user\\" (id),
+  \\"token\\" text,
+  UNIQUE(id, revision)
+);"
+`;
+
+exports[`Schema generation session generates expected schema 2`] = `
+"CREATE TABLE \\"session\\" (
+  id uuid NOT NULL,
+  revision BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id, revision) REFERENCES \\"session_revision\\" (id, revision)
+);"
+`;
+
+exports[`Schema generation user generates expected schema 1`] = `
+"CREATE TABLE \\"user_revision\\" (
+  id uuid NOT NULL,
+  revision BIGSERIAL,
+  \\"password_id\\" uuid REFERENCES \\"password\\" (id),
+  \\"name\\" text,
+  UNIQUE(id, revision)
+);"
+`;
+
+exports[`Schema generation user generates expected schema 2`] = `
+"CREATE TABLE \\"user\\" (
+  id uuid NOT NULL,
+  revision BIGINT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id, revision) REFERENCES \\"user_revision\\" (id, revision)
 );"
 `;
 

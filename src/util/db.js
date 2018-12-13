@@ -33,10 +33,26 @@ function createTestDB() {
 }
 
 function bootstrapDB(db) {
-  const { PriceStorage, WheelStorage, BikeStorage } = storages;
+  const {
+    PasswordStorage,
+    UserStorage,
+    SessionStorage,
+    BikeOwnerStorage,
+    PriceStorage,
+    WheelStorage,
+    BikeStorage,
+  } = storages;
 
   beforeAll(async () => {
-    for (const StorageAdapter of [PriceStorage, WheelStorage, BikeStorage]) {
+    for (const StorageAdapter of [
+      PasswordStorage,
+      UserStorage,
+      SessionStorage,
+      PriceStorage,
+      WheelStorage,
+      BikeStorage,
+      BikeOwnerStorage,
+    ]) {
       const statements = createSchema(StorageAdapter);
       for (const statement of statements) {
         await db.query(statement);
