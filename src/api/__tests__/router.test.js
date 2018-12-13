@@ -30,6 +30,15 @@ describe('Router', () => {
           .expect({ error: { message: 'Authorization required.' } })
           .end(done);
     });
+
+    it('denies access with invalid Auth header', done => {
+        request(app)
+          .get('/auth/foo')
+          .set('Authorization', 'foo bar')
+          .expect(401)
+          .expect({ error: { message: 'Authorization required.' } })
+          .end(done);
+    });
   });
 
 
