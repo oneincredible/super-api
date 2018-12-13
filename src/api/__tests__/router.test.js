@@ -20,7 +20,10 @@ describe('Router', () => {
 
   const app = express();
   app.use('/', router);
-  app.use('/auth', requireAuth);
+  app.use('/auth', requireAuth, (req, res) => {
+    res.send(req.session);
+    res.end();
+  });
 
   describe('Authorization', () => {
     it('denies all access without Auth header', done => {
@@ -46,6 +49,38 @@ describe('Router', () => {
         .set('Authorization', 'Bearer c591990c-ff28-11e8-b9e1-00090ffe0001')
         .expect(401)
         .expect({ error: { message: 'Invalid token.' } })
+        .end(done);
+    });
+
+    it('grants access with known Auth token and adds session', async done => {
+      await sessionStorage.store({
+        id: 'f8052136-ff2a-11e8-9055-00090ffe0001',
+        user: {
+          id: '016ef850-ff2b-11e8-b4a0-00090ffe0001',
+          password: {
+            id: '0f3385a0-ff2b-11e8-84c1-00090ffe0001',
+            hash: 'apa',
+          },
+        },
+      });
+
+      request(app)
+        .get('/auth/foo')
+        .set('Authorization', 'Bearer f8052136-ff2a-11e8-9055-00090ffe0001')
+        .expect(200)
+        .expect({
+          id: 'f8052136-ff2a-11e8-9055-00090ffe0001',
+          token: null,
+          user: {
+            id: '016ef850-ff2b-11e8-b4a0-00090ffe0001',
+            name: null,
+            password: {
+              id: '0f3385a0-ff2b-11e8-84c1-00090ffe0001',
+              date: null,
+              hash: 'apa',
+            },
+          },
+        })
         .end(done);
     });
   });
