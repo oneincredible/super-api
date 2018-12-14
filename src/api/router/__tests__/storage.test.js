@@ -1,15 +1,16 @@
-const { createTestDB, bootstrapDB } = require('../../util/db');
+const express = require('express');
+const request = require('supertest');
+
+const { createTestDB, bootstrapDB } = require('../../../util/db');
 const {
   createBike,
   createWheel,
   models,
   storages,
-} = require('../../util/model');
-const { createStorageRouter } = require('../router');
-const express = require('express');
-const request = require('supertest');
+} = require('../../../util/model');
+const { createStorageRouter } = require('../storage');
 
-describe('Router', () => {
+describe('Storage Router', () => {
   const db = createTestDB();
   bootstrapDB(db);
   const bikeStorage = new storages.BikeStorage(db);
