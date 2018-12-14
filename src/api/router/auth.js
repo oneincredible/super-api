@@ -1,9 +1,9 @@
 const express = require('express');
 const uuidv4 = require('uuid/v4');
-const { compare, hash } = require('../../security/password');
+const { compare } = require('../../security/password');
 const { createAuthorizationLayer } = require('../layer/auth');
 
-function createHandleLogin(sessionStorage, userStorage) {
+function createLogin(sessionStorage, userStorage) {
   return async function handleLogin(req, res) {
     const { id, secret } = req.body;
 
@@ -30,14 +30,20 @@ function createHandleLogin(sessionStorage, userStorage) {
   };
 }
 
+function createFetch() {
+  return function fetchSession(req, res) {
+    res.send(req.session);
+  };
+}
+
 function createAuthenticationRouter(sessionStorage, userStorage) {
   const router = express.Router();
 
-  router.get('/', createAuthorizationLayer(sessionStorage), (req, res) =>
-    res.send(req.session)
-  );
+  const requireAuth = createAuthorizationLayer(sessionStorage);
 
-  router.post('/', createHandleLogin(sessionStorage, userStorage));
+  router.get('/', requireAuth, createFetch());
+
+  router.post('/', createLogin(sessionStorage, userStorage));
 
   return router;
 }
