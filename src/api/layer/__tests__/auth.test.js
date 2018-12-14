@@ -1,13 +1,12 @@
 const express = require('express');
 const request = require('supertest');
 
-const { createTestDB, bootstrapDB } = require('../../../util/db');
+const { createTestDB } = require('../../../util/db');
 const { storages } = require('../../../util/model');
 const { createAuthorizationLayer } = require('../auth');
 
 describe('Authorization Layer', () => {
   const db = createTestDB();
-  bootstrapDB(db);
   const sessionStorage = new storages.SessionStorage(db);
   const requireAuth = createAuthorizationLayer(sessionStorage);
 

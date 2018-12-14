@@ -1,10 +1,9 @@
-const { createTestDB, bootstrapDB } = require('../../util/db');
+const { createTestDB } = require('../../util/db');
 const { createBike, createPrice, storages } = require('../../util/model');
 const { Storage } = require('../storage');
 
 describe('Storage', () => {
   const db = createTestDB();
-  bootstrapDB(db);
 
   describe('Storage', () => {
     let bike;

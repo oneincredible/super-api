@@ -23,6 +23,8 @@ function createTestDB() {
     db.connect();
   });
 
+  bootstrapDB(db);
+
   afterAll(async () => {
     await db.end();
     await createDB.query(`DROP DATABASE "${DB_NAME}";`);
@@ -62,6 +64,5 @@ function bootstrapDB(db) {
 }
 
 module.exports = {
-  bootstrapDB,
   createTestDB,
 };
