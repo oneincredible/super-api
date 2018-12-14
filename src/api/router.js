@@ -1,5 +1,5 @@
 const express = require('express');
-const { isUUID } = require('./validation');
+const { isUUID } = require('../validation/uuid');
 
 function ensureUUID(paramName) {
   return function(req, res, next) {
