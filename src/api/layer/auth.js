@@ -1,5 +1,5 @@
 function createAuthorizationLayer(sessionStorage) {
-  return async function checkAuthorization(req, res, next) {
+  return async function ensureAuthorization(req, res, next) {
     const auth = req.headers.authorization;
     if (!auth) {
       res.statusCode = 401;

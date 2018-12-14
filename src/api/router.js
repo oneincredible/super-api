@@ -1,6 +1,6 @@
 const express = require('express');
 const { createUUIDCheckLayer } = require('./layer/validation');
-const { createAuthorizationLayer } = require('./router/auth');
+const { createAuthorizationLayer } = require('./layer/auth');
 
 function createRelationRouter(name, relationStorage) {
   const router = express.Router();
