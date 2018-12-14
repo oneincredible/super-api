@@ -34,7 +34,7 @@ function createStoreRevision(Model, name) {
   const placeholders = columns.map((name, index) => '$' + (index + 1));
 
   const text = [
-    `INSERT INTO "${revisionTable}"`,
+    `INSERT INTO ${quote(revisionTable)}`,
     '(' + columns.map(quote).join(', ') + ')',
     'VALUES (' + placeholders.join(', ') + ')',
   ].join(' ');
@@ -49,7 +49,7 @@ function createStoreRevision(Model, name) {
 
 function createPromoteRevision(name) {
   const text = [
-    `INSERT INTO "${name}" (id, revision)`,
+    `INSERT INTO ${quote(name)} (id, revision)`,
     `SELECT id, MAX(revision) FROM "${name}_revision" WHERE id = $1 GROUP BY id`,
     'ON CONFLICT (id) DO UPDATE SET revision = excluded.revision',
   ].join(' ');
