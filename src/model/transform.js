@@ -1,16 +1,3 @@
-const bcrypt = require('bcrypt');
-
-function hashPassword(password) {
-  return new Promise((resolve, reject) => {
-    bcrypt.hash(password, 10, (err, hash) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(hash);
-    });
-  });
-}
-
 function createTransform(encode, decode) {
   return { encode, decode };
 }
@@ -35,14 +22,9 @@ function int(base = 10) {
   return createTransform(parse, parse);
 }
 
-function password() {
-  return createTransform(hashPassword, noop);
-}
-
 module.exports = {
   date,
   float,
   int,
-  password,
   noop: createTransform(noop, noop),
 };
