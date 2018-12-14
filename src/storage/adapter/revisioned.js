@@ -68,9 +68,17 @@ function createRevisionedStorageAdapter(Model, name) {
   const listFields = Model.fields.filter(field => field.type === Type.LIST);
   const modelFields = Model.fields.filter(field => field.type === Type.MODEL);
 
+  const composedStorages = modelFields.map(field => {
+    return [field.name, field.StorageAdapter];
+  });
+
+  const relationStorages = listFields.map(field => {
+    return [field.name, createRelationStorageAdapter(Model, field, name)];
+  });
+
   function createComposedStorage(db) {
     const composed = Object.create(null);
-    for (const { name, StorageAdapter } of modelFields) {
+    for (const [name, StorageAdapter] of composedStorages) {
       composed[name] = new StorageAdapter(db);
     }
     return composed;
@@ -78,13 +86,8 @@ function createRevisionedStorageAdapter(Model, name) {
 
   function createRelationsStorage(db) {
     const relations = Object.create(null);
-    for (const field of listFields) {
-      const RelationsStorageAdapter = createRelationStorageAdapter(
-        Model,
-        field,
-        name
-      );
-      relations[field.name] = new RelationsStorageAdapter(db);
+    for (const [name, RelationsStorageAdapter] of relationStorages) {
+      relations[name] = new RelationsStorageAdapter(db);
     }
     return relations;
   }
