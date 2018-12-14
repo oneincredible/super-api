@@ -80,36 +80,43 @@ describe('Storage', () => {
         await storage.store(bike);
       });
 
-      it('inserts row in DB with revision 1', async () => {
-        const res = await db.query(
-          'SELECT * FROM bike_revision WHERE id = $1',
-          [bike.id]
-        );
-        expect(res.rowCount).toEqual(1);
+      it('makes object retrievable', async () => {
+        const model = await storage.fetch(bike.id);
+        expect(model).toEqual({
+          brand: 'Crescent',
+          deliveryDate: new Date('1992-02-02T00:00:00.000Z'),
+          id: bike.id,
+          price: {
+            amount: 2433.99,
+            currency: 'USD',
+            id: bike.price.id,
+          },
+          wheelSize: 24,
+          wheels: [],
+        });
       });
 
-      it('stores model relations', async () => {
-        const res = await db.query(
-          'SELECT * FROM price_revision WHERE id = $1',
-          [bike.price.id]
-        );
-        expect(res.rowCount).toEqual(1);
-      });
-
-      describe('when storing same object again', () => {
+      describe('when storing object again', () => {
         beforeEach(async () => {
           bike.brand = 'DSB';
+          bike.price.currency = 'SEK';
           await storage.store(bike);
         });
 
-        it('adds a revision', async () => {
-          const res = await db.query(
-            'SELECT * FROM bike_revision WHERE id = $1 ORDER BY revision ASC',
-            [bike.id]
-          );
-          expect(res.rowCount).toEqual(2);
-          expect(res.rows[0].brand).toEqual('Crescent');
-          expect(res.rows[1].brand).toEqual('DSB');
+        it('has saved updated object', async () => {
+          const model = await storage.fetch(bike.id);
+          expect(model).toEqual({
+            brand: 'DSB',
+            deliveryDate: new Date('1992-02-02T00:00:00.000Z'),
+            id: bike.id,
+            price: {
+              amount: 2433.99,
+              currency: 'SEK',
+              id: bike.price.id,
+            },
+            wheelSize: 24,
+            wheels: [],
+          });
         });
       });
     });
