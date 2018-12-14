@@ -14,13 +14,13 @@ function createFetchRevision(Model, name) {
     'SELECT ' + fields.join(', '),
     `FROM ${quote(revisionTable)} r`,
     `JOIN ${quote(parentTable)} p ON p.id = r.id AND p.revision = r.revision`,
-    'WHERE p.id = $1',
+    'WHERE p.id = ANY($1)',
   ].join(' ');
 
-  return function createQuery(id) {
+  return function createQuery(ids) {
     return {
       text,
-      values: [id],
+      values: [ids],
     };
   };
 }
