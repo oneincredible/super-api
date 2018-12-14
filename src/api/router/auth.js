@@ -24,7 +24,7 @@ function createLogin(sessionStorage, userStorage) {
     res.statusCode = 401;
     return res.send({
       error: {
-        message: 'Authentication failed',
+        message: 'Authentication failed.',
       },
     });
   };
@@ -38,6 +38,7 @@ function createFetch() {
 
 function createAuthenticationRouter(sessionStorage, userStorage) {
   const router = express.Router();
+  router.use(express.json());
 
   const requireAuth = createAuthorizationLayer(sessionStorage);
 
