@@ -5,7 +5,7 @@ const { createAuthorizationLayer } = require('./layer/auth');
 function createRelationRouter(name, relationStorage) {
   const router = express.Router();
 
-  const checkUUIDs = createUUIDCheckLayer('parentId', 'childId');
+  const checkUUIDs = createUUIDCheckLayer(req => Object.values(req.params));
 
   router.put(`/:parentId/${name}/:childId`, checkUUIDs, async (req, res) => {
     const { parentId, childId } = req.params;
@@ -35,19 +35,23 @@ function createStorageRouter(Model, storage) {
     res.end();
   });
 
-  router.get('/:modelId', createUUIDCheckLayer('modelId'), async (req, res) => {
-    const id = req.params.modelId;
-    const result = await storage.fetch(id);
-    if (!result) {
-      res.statusCode = 404;
-      return res.send({
-        error: {
-          message: `No object found for ${id}`,
-        },
-      });
+  router.get(
+    '/:modelId',
+    createUUIDCheckLayer(req => Object.values(req.params)),
+    async (req, res) => {
+      const id = req.params.modelId;
+      const result = await storage.fetch(id);
+      if (!result) {
+        res.statusCode = 404;
+        return res.send({
+          error: {
+            message: `No object found for ${id}`,
+          },
+        });
+      }
+      res.send(Model.encode(result));
     }
-    res.send(Model.encode(result));
-  });
+  );
 
   Object.entries(storage.relations).forEach(([name, storage]) => {
     const relationRouter = createRelationRouter(name, storage);

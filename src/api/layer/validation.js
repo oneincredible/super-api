@@ -1,8 +1,8 @@
 const { isUUID } = require('../../validation/uuid');
 
-function createUUIDCheckLayer(...paramNames) {
+function createUUIDCheckLayer(getValues) {
   return function checkUUID(req, res, next) {
-    const values = paramNames.map(key => req.params[key]);
+    const values = getValues(req);
     for (const value of values) {
       if (!isUUID(value)) {
         res.statusCode = 400;
