@@ -1,21 +1,24 @@
 const { isUUID } = require('../../validation/uuid');
 
-function ensureUUID(paramName) {
-  return function(req, res, next) {
-    const value = req.params[paramName];
-    if (isUUID(value)) {
-      return next();
+function createUUIDCheckLayer(...paramNames) {
+  return function checkUUID(req, res, next) {
+    const values = paramNames.map(key => req.params[key]);
+    for (const value of values) {
+      if (!isUUID(value)) {
+        res.statusCode = 400;
+        res.send({
+          error: {
+            message: `Malformed UUID: ${value}`,
+          },
+        });
+        return;
+      }
     }
 
-    res.statusCode = 400;
-    res.send({
-      error: {
-        message: `Malformed UUID: ${value}`,
-      },
-    });
+    return next();
   };
 }
 
 module.exports = {
-  ensureUUID,
+  createUUIDCheckLayer,
 };

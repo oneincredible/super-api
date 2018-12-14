@@ -1,13 +1,14 @@
 const express = require('express');
-const { ensureUUID } = require('./layer/validation');
+const { createUUIDCheckLayer } = require('./layer/validation');
 
 function createRelationRouter(name, relationStorage) {
   const router = express.Router();
 
+  const checkUUIDs = createUUIDCheckLayer('parentId', 'childId');
+
   router.put(
     `/:parentId/${name}/:childId`,
-    ensureUUID('parentId'),
-    ensureUUID('childId'),
+    checkUUIDs,
     async (req, res) => {
       const { parentId, childId } = req.params;
       await relationStorage.add(parentId, childId);
@@ -18,8 +19,7 @@ function createRelationRouter(name, relationStorage) {
 
   router.delete(
     `/:parentId/${name}/:childId`,
-    ensureUUID('parentId'),
-    ensureUUID('childId'),
+    checkUUIDs,
     async (req, res) => {
       const { parentId, childId } = req.params;
       await relationStorage.remove(parentId, childId);
@@ -42,7 +42,7 @@ function createStorageRouter(Model, storage) {
     res.end();
   });
 
-  router.get('/:modelId', ensureUUID('modelId'), async (req, res) => {
+  router.get('/:modelId', createUUIDCheckLayer('modelId'), async (req, res) => {
     const id = req.params.modelId;
     const result = await storage.fetch(id);
     if (!result) {
