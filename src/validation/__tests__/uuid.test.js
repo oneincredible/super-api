@@ -1,4 +1,4 @@
-const { isUUID } = require('../validation');
+const { isUUID } = require('../uuid');
 
 describe('Validation', () => {
   describe('#isUUID', () => {
