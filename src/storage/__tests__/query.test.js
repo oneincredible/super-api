@@ -13,9 +13,9 @@ describe('Query modules', () => {
   describe('#createFetchRevision', () => {
     it('creates a query builder based on model', () => {
       const createQuery = createFetchRevision(Model, 'video');
-      const query = createQuery('my-whatever-id');
+      const query = createQuery(['my-whatever-id']);
       expect(query.text).toMatchSnapshot();
-      expect(query.values).toEqual(['my-whatever-id']);
+      expect(query.values).toEqual([['my-whatever-id']]);
     });
   });
 

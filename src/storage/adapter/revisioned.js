@@ -56,7 +56,7 @@ function createRevisionedStorageAdapter(Model, name) {
     }
 
     async fetch(modelId) {
-      const result = await this.db.query(Query.fetchRevision(modelId));
+      const result = await this.db.query(Query.fetchRevision([modelId]));
       if (result.rowCount === 0) {
         return null;
       }
