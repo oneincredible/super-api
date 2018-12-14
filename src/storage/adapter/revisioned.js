@@ -37,6 +37,7 @@ function createStoreRevision(Model, name) {
     `INSERT INTO ${quote(revisionTable)}`,
     '(' + columns.map(quote).join(', ') + ')',
     'VALUES (' + placeholders.join(', ') + ')',
+    'RETURNING revision',
   ].join(' ');
 
   return function createQuery(model) {
@@ -50,14 +51,14 @@ function createStoreRevision(Model, name) {
 function createPromoteRevision(name) {
   const text = [
     `INSERT INTO ${quote(name)} (id, revision)`,
-    `SELECT id, MAX(revision) FROM "${name}_revision" WHERE id = $1 GROUP BY id`,
-    'ON CONFLICT (id) DO UPDATE SET revision = excluded.revision',
+    `VALUES($1, $2)`,
+    'ON CONFLICT (id) DO UPDATE SET revision = GREATEST($2, excluded.revision)',
   ].join(' ');
 
-  return function createQuery(model) {
+  return function createQuery(model, revision) {
     return {
       text,
-      values: [model.id],
+      values: [model.id, revision],
     };
   };
 }
@@ -147,9 +148,9 @@ function createRevisionedStorageAdapter(Model, name) {
       try {
         await this.db.query('BEGIN');
 
-        const revision = Date.now();
-        await this.db.query(Query.storeRevision(model, revision));
-        await this.db.query(Query.promoteRevision(model));
+        const result = await this.db.query(Query.storeRevision(model));
+        const { revision } = result.rows[0];
+        await this.db.query(Query.promoteRevision(model, revision));
 
         await this.db.query('COMMIT');
       } catch (error) {
