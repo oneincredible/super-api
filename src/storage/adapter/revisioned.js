@@ -26,6 +26,37 @@ function createFetchRevision(Model, name) {
   };
 }
 
+function createFindRevision(Model, name) {
+  const parentTable = name;
+  const revisionTable = `${name}_revision`;
+
+  const fields = Model.fields.reduce(
+    (map, field) => map.set(field.name, `r.${quote(field.columnName)}`),
+    new Map()
+  );
+
+  const base = [
+    `SELECT p.id FROM ${quote(revisionTable)} r`,
+    `JOIN ${quote(parentTable)} p ON p.id = r.id AND p.revision = r.revision`,
+  ].join(' ');
+
+  return function createQuery(filters) {
+    const where = filters
+      .map(([name], index) => {
+        if (!fields.has(name)) {
+          throw new Error(`Unknown field ${name}.`);
+        }
+        return [fields.get(name), '$' + (index + 1)].join(' = ');
+      })
+      .join(' AND ');
+
+    return {
+      text: [base, `WHERE ${where}`].join(' '),
+      values: filters.map(([, value]) => value),
+    };
+  };
+}
+
 function createStoreRevision(Model, name) {
   const revisionTable = `${name}_revision`;
 
@@ -95,6 +126,7 @@ function createRevisionedStorageAdapter(Model, name) {
 
   const Query = {
     fetchRevision: createFetchRevision(Model, tableName),
+    findRevision: createFindRevision(Model, tableName),
     storeRevision: createStoreRevision(Model, tableName),
     promoteRevision: createPromoteRevision(tableName),
   };
@@ -112,6 +144,10 @@ function createRevisionedStorageAdapter(Model, name) {
       super(db);
       this.composed = createComposedStorage(db);
       this.relations = createRelationsStorage(db);
+    }
+
+    find(filters) {
+      return this.db.query(Query.findRevision(filters));
     }
 
     async fetch(modelId) {
