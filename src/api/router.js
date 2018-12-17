@@ -6,26 +6,18 @@ function createRelationRouter(name, relationStorage) {
 
   const checkUUIDs = createUUIDCheckLayer('parentId', 'childId');
 
-  router.put(
-    `/:parentId/${name}/:childId`,
-    checkUUIDs,
-    async (req, res) => {
-      const { parentId, childId } = req.params;
-      await relationStorage.add(parentId, childId);
-      res.statusCode = 201;
-      res.end();
-    }
-  );
+  router.put(`/:parentId/${name}/:childId`, checkUUIDs, async (req, res) => {
+    const { parentId, childId } = req.params;
+    await relationStorage.add(parentId, childId);
+    res.statusCode = 201;
+    res.end();
+  });
 
-  router.delete(
-    `/:parentId/${name}/:childId`,
-    checkUUIDs,
-    async (req, res) => {
-      const { parentId, childId } = req.params;
-      await relationStorage.remove(parentId, childId);
-      res.end();
-    }
-  );
+  router.delete(`/:parentId/${name}/:childId`, checkUUIDs, async (req, res) => {
+    const { parentId, childId } = req.params;
+    await relationStorage.remove(parentId, childId);
+    res.end();
+  });
 
   return router;
 }
