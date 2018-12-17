@@ -1,47 +1,23 @@
 const express = require('express');
-const { isUUID } = require('../validation/uuid');
-
-function ensureUUID(paramName) {
-  return function(req, res, next) {
-    const value = req.params[paramName];
-    if (isUUID(value)) {
-      return next();
-    }
-
-    res.statusCode = 400;
-    res.send({
-      error: {
-        message: `Malformed UUID: ${value}`,
-      },
-    });
-  };
-}
+const { createUUIDCheckLayer } = require('./layer/validation');
 
 function createRelationRouter(name, relationStorage) {
   const router = express.Router();
 
-  router.put(
-    `/:parentId/${name}/:childId`,
-    ensureUUID('parentId'),
-    ensureUUID('childId'),
-    async (req, res) => {
-      const { parentId, childId } = req.params;
-      await relationStorage.add(parentId, childId);
-      res.statusCode = 201;
-      res.end();
-    }
-  );
+  const checkUUIDs = createUUIDCheckLayer('parentId', 'childId');
 
-  router.delete(
-    `/:parentId/${name}/:childId`,
-    ensureUUID('parentId'),
-    ensureUUID('childId'),
-    async (req, res) => {
-      const { parentId, childId } = req.params;
-      await relationStorage.remove(parentId, childId);
-      res.end();
-    }
-  );
+  router.put(`/:parentId/${name}/:childId`, checkUUIDs, async (req, res) => {
+    const { parentId, childId } = req.params;
+    await relationStorage.add(parentId, childId);
+    res.statusCode = 201;
+    res.end();
+  });
+
+  router.delete(`/:parentId/${name}/:childId`, checkUUIDs, async (req, res) => {
+    const { parentId, childId } = req.params;
+    await relationStorage.remove(parentId, childId);
+    res.end();
+  });
 
   return router;
 }
@@ -58,7 +34,7 @@ function createStorageRouter(Model, storage) {
     res.end();
   });
 
-  router.get('/:modelId', ensureUUID('modelId'), async (req, res) => {
+  router.get('/:modelId', createUUIDCheckLayer('modelId'), async (req, res) => {
     const id = req.params.modelId;
     const result = await storage.fetch(id);
     if (!result) {
